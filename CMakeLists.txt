@@ -99,26 +99,29 @@ target_include_directories(PNGwriter PUBLIC
 )
 
 # examples & tests
-set(PNGwriter_examples lyapunov pngtest)
-set(PNGwriter_tests blackwhite diamond readwrite)
-if(BUILD_PERFORMANCE)
-    list(APPEND PNGwriter_tests performance)
+if(BUILD_EXAMPLES)
+    set(PNGwriter_examples lyapunov pngtest)
+    foreach(examplename IN LISTS PNGwriter_examples)
+        add_executable(${examplename} examples/${examplename}.cc)
+        target_link_libraries(${examplename} PRIVATE PNGwriter)
+    endforeach()
 endif()
 
-foreach(examplename IN LISTS PNGwriter_examples)
-    add_executable(${examplename} examples/${examplename}.cc)
-    target_link_libraries(${examplename} PRIVATE PNGwriter)
-endforeach()
-foreach(testname IN LISTS PNGwriter_tests)
-    add_executable(${testname} tests/${testname}.cc)
-    target_link_libraries(${testname} PRIVATE PNGwriter)
-endforeach()
-
-if(BUILD_PERFORMANCE)
-    set_target_properties(performance PROPERTIES
-        CXX_STANDARD 11
-        CXX_STANDARD_REQUIRED ON
-    )
+if(BUIILD_TESTS)
+    set(PNGwriter_tests blackwhite diamond readwrite)
+    if(BUILD_PERFORMANCE)
+        list(APPEND PNGwriter_tests performance)
+    endif()
+    foreach(testname IN LISTS PNGwriter_tests)
+        add_executable(${testname} tests/${testname}.cc)
+        target_link_libraries(${testname} PRIVATE PNGwriter)
+    endforeach()
+    if(BUILD_PERFORMANCE)
+        set_target_properties(performance PROPERTIES
+            CXX_STANDARD 11
+            CXX_STANDARD_REQUIRED ON
+        )
+    endif()
 endif()
 
 
@@ -164,43 +167,47 @@ install(
 
 # Tests #######################################################################
 #
-enable_testing()
+if(BUILD_TESTS)
+    enable_testing()
 
-set(REFERENCE_PNGS
-    pngs/burro.png
-    pngs/bw_16bit_rgba_20x20.png
-    pngs/bw_8bit_rgba_20x20.png
-    pngs/bw_16bit_rgb_20x20.png
-    pngs/bw_8bit_rgb_20x20.png
-)
-file(COPY ${REFERENCE_PNGS} DESTINATION ${PNGwriter_BINARY_DIR})
-
-foreach(examplename IN LISTS PNGwriter_examples)
-    add_test(NAME example.${examplename}
-        COMMAND ${examplename}
+    set(REFERENCE_PNGS
+        pngs/burro.png
+        pngs/bw_16bit_rgba_20x20.png
+        pngs/bw_8bit_rgba_20x20.png
+        pngs/bw_16bit_rgb_20x20.png
+        pngs/bw_8bit_rgb_20x20.png
     )
-endforeach()
-foreach(testname IN LISTS PNGwriter_tests)
-    if(testname STREQUAL blackwhite)
-        add_test(NAME test.${testname}.16bit.rgb
-            COMMAND ${testname} bw_16bit_rgb_20x20.png
-        )
-        add_test(NAME test.${testname}.16bit.rgba
-            COMMAND ${testname} bw_16bit_rgba_20x20.png
-        )
-        add_test(NAME test.${testname}.8bit.rgba
-            COMMAND ${testname} bw_8bit_rgba_20x20.png
-        )
-        add_test(NAME test.${testname}.8bit.rgb
-            COMMAND ${testname} bw_8bit_rgb_20x20.png
-        )
-    else()
-        add_test(NAME test.${testname}
-            COMMAND ${testname}
-        )
-    endif()
-endforeach()
+    file(COPY ${REFERENCE_PNGS} DESTINATION ${PNGwriter_BINARY_DIR})
 
+    if(BUILD_EXAMPLES)
+        foreach(examplename IN LISTS PNGwriter_examples)
+            add_test(NAME example.${examplename}
+                COMMAND ${examplename}
+            )
+        endforeach()
+    endif()
+
+    foreach(testname IN LISTS PNGwriter_tests)
+        if(testname STREQUAL blackwhite)
+            add_test(NAME test.${testname}.16bit.rgb
+                COMMAND ${testname} bw_16bit_rgb_20x20.png
+            )
+            add_test(NAME test.${testname}.16bit.rgba
+                COMMAND ${testname} bw_16bit_rgba_20x20.png
+            )
+            add_test(NAME test.${testname}.8bit.rgba
+                COMMAND ${testname} bw_8bit_rgba_20x20.png
+            )
+            add_test(NAME test.${testname}.8bit.rgb
+                COMMAND ${testname} bw_8bit_rgb_20x20.png
+            )
+        else()
+            add_test(NAME test.${testname}
+                COMMAND ${testname}
+            )
+        endif()
+    endforeach()
+endif()
 
 # Status Message for Build Options ############################################
 #
