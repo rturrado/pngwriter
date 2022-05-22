@@ -93,7 +93,6 @@ endif()
 
 set_target_properties(PNGwriter PROPERTIES PUBLIC_HEADER "src/pngwriter.h")
 target_include_directories(PNGwriter PUBLIC
-    $<BUILD_INTERFACE:${PNGwriter_BINARY_DIR}/src>
     $<BUILD_INTERFACE:${PNGwriter_SOURCE_DIR}/src>
     $<INSTALL_INTERFACE:include>
 )
