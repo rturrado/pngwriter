@@ -83,18 +83,18 @@ if(NOT WIN32)
 endif()
 
 if(PNGwriter_HAVE_FREETYPE)
-    target_include_directories(PNGwriter SYSTEM PUBLIC ${FREETYPE_INCLUDE_DIRS})
-    target_link_libraries(PNGwriter PUBLIC ${FREETYPE_LIBRARIES})
+    target_include_directories(PNGwriter PRIVATE ${FREETYPE_INCLUDE_DIRS})
+    target_link_libraries(PNGwriter PRIVATE ${FREETYPE_LIBRARIES})
     target_compile_definitions(PNGwriter PUBLIC "-DUSE_FREETYPE")
-    target_compile_definitions(PNGwriter PUBLIC ${FREETYPE_FLAGS})
+    target_compile_definitions(PNGwriter PRIVATE ${FREETYPE_FLAGS})
 else()
     target_compile_definitions(PNGwriter PUBLIC "-DNO_FREETYPE")
 endif()
 
 set_target_properties(PNGwriter PROPERTIES PUBLIC_HEADER "src/pngwriter.h")
 target_include_directories(PNGwriter PUBLIC
-    $<BUILD_INTERFACE:${PNGwriter_SOURCE_DIR}/src>
-    $<INSTALL_INTERFACE:include>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
+    $<INSTALL_INTERFACE:src>
 )
 
 # examples & tests

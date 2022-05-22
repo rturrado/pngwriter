@@ -11,3 +11,4 @@ build/
 # original backup files
 *.orig
 /.vs
+/CMakeSettings.json
