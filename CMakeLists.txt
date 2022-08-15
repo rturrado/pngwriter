@@ -20,6 +20,10 @@
 #
 cmake_minimum_required(VERSION 3.0.1)
 
+if (POLICY CMP0128)
+    cmake_policy(SET CMP0128 NEW)
+endif()
+
 project(PNGwriter VERSION 0.7.0 LANGUAGES CXX)
 
 
